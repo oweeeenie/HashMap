@@ -23,7 +23,21 @@ class HashMap {
     hashCode = hashCode % this.capacity;
 
     if (!this.buckets[hashCode]) {
+      // checks if the array index is already taken
       this.buckets[hashCode] = [];
+      this.buckets[hashCode].push({ key, value });
+    }
+
+    let keyFound = false;
+
+    for (let i = 0; i < this.buckets[hashCode].length; i++) {
+      if (this.buckets[hashCode][i].key === key) {
+        this.buckets[hashCode][i].value = value;
+        keyFound = true;
+      }
+    }
+
+    if (!keyFound) {
       this.buckets[hashCode].push({ key, value });
     }
   }
