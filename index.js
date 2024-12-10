@@ -1,3 +1,4 @@
+import { validate } from 'webpack';
 import './styles.css';
 
 class HashMap {
@@ -19,7 +20,7 @@ class HashMap {
   }
 
   set(key, value) {
-    let hashCode = hash(key);
+    let hashCode = this.hash(key);
     hashCode = hashCode % this.capacity;
 
     if (!this.buckets[hashCode]) {
@@ -34,6 +35,7 @@ class HashMap {
       if (this.buckets[hashCode][i].key === key) {
         this.buckets[hashCode][i].value = value;
         keyFound = true;
+        break;
       }
     }
 
@@ -41,4 +43,22 @@ class HashMap {
       this.buckets[hashCode].push({ key, value });
     }
   }
+
+  get(key) {
+    let hashCode = this.hash(key);
+
+    if (!this.buckets[hashCode]) {
+      return undefined;
+    }
+
+    for (let i = 0; i < this.buckets[hashCode].length; i++) {
+      if (key === this.buckets[hashCode][i].key) {
+        return this.buckets[hashCode][i].value;
+      }
+    }
+
+    return undefined;
+  }
 }
+
+console.log('hi');
