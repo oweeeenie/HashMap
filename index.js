@@ -87,25 +87,32 @@ class HashMap {
     }
     return false;
   }
+
+  length() {
+    let keyCount = 0;
+
+    for (let i = 0; i < this.buckets.length; i++) {
+      if (this.buckets[i]) {
+        keyCount = keyCount + this.buckets[i].length;
+      }
+    }
+    return keyCount;
+  }
+
+  clear() {
+    this.buckets = new Array(this.capacity);
+  }
+
+  keys() {
+    let collectedKeys = [];
+    for (let i = 0; i < this.buckets.length; i++) {
+      if (!this.buckets[i]) {
+        continue;
+      }
+      for (let j = 0; j < this.buckets[i].length; j++) {
+        collectedKeys.push(this.buckets[i][j].key);
+      }
+    }
+    return collectedKeys;
+  }
 }
-
-const hashmap = new HashMap();
-
-hashmap.set('a', 1);
-hashmap.set('b', 2);
-hashmap.set('c', 3);
-
-console.log(hashmap.get('a')); // should print: 1
-console.log(hashmap.get('b')); // should print: 2
-console.log(hashmap.get('c')); // should print: 3
-
-// Remove a key that exists
-console.log(hashmap.remove('b')); // should print: true
-console.log(hashmap.get('b')); // should print: undefined (because 'b' was removed)
-
-// Try to remove a key that doesn't exist
-console.log(hashmap.remove('z')); // should print: false
-console.log(hashmap.get('z')); // should print: undefined (because 'z' was never added)
-
-console.log(hashmap.get('a')); // should still print: 1
-console.log(hashmap.get('c')); // should still print: 3
