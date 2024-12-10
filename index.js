@@ -1,6 +1,3 @@
-import { validate } from 'webpack';
-import './styles.css';
-
 class HashMap {
   constructor(capacity, loadFactor) {
     this.capacity = 16;
@@ -21,12 +18,11 @@ class HashMap {
 
   set(key, value) {
     let hashCode = this.hash(key);
-    hashCode = hashCode % this.capacity;
+    hashCode = Math.abs(hashCode) % this.capacity; // makes hashcode POSITIVE ALWAYS
 
     if (!this.buckets[hashCode]) {
       // checks if the array index is already taken
       this.buckets[hashCode] = [];
-      this.buckets[hashCode].push({ key, value });
     }
 
     let keyFound = false;
@@ -46,7 +42,7 @@ class HashMap {
 
   get(key) {
     let hashCode = this.hash(key);
-
+    hashCode = Math.abs(hashCode) % this.capacity;
     if (!this.buckets[hashCode]) {
       return undefined;
     }
@@ -56,9 +52,17 @@ class HashMap {
         return this.buckets[hashCode][i].value;
       }
     }
-
     return undefined;
   }
 }
 
-console.log('hi');
+const hashmap = new HashMap();
+
+hashmap.set('a', 1);
+hashmap.set('b', 2);
+hashmap.set('c', 3);
+
+console.log(hashmap.get('a')); // should print: 1
+console.log(hashmap.get('b')); // should print: 2
+console.log(hashmap.get('c')); // should print: 3
+console.log(hashmap.get('d')); // should print: undefined (key "d" doesn't exist)
