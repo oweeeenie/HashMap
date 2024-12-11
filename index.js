@@ -3,8 +3,10 @@ class HashMap {
     this.capacity = 16;
     this.loadFactor = 0.75;
     this.buckets = new Array(this.capacity);
+    this.size = 0;
   }
 
+  // takes a key as an arguement and generates a hashcode. (this code was provided, i DID NOT write this myself)
   hash(key) {
     let hashCode = 0;
 
@@ -16,6 +18,35 @@ class HashMap {
     return hashCode;
   }
 
+  resize() {
+    console.log('Resizing...'); // logs when i am resizing
+    const newCapacity = this.capacity * 2; // doubles bucket size
+    const newBuckets = new Array(newCapacity);
+
+    // Rehash all existing entries into the new buckets
+    for (let i = 0; i < this.buckets.length; i++) {
+      if (this.buckets[i]) {
+        for (let j = 0; j < this.buckets[i].length; j++) {
+          const { key, value } = this.buckets[i][j];
+          let hashCode = this.hash(key);
+          hashCode = Math.abs(hashCode) % newCapacity;
+
+          if (!newBuckets[hashCode]) {
+            newBuckets[hashCode] = [];
+          }
+
+          newBuckets[hashCode].push({ key, value });
+        }
+      }
+    }
+
+    // new array for new entries/buckets
+    this.buckets = newBuckets;
+    this.capacity = newCapacity;
+    console.log('New capacity:', this.capacity);
+  }
+
+  // takes 2 arguements, key and value. actual assigns the key, and the value
   set(key, value) {
     let hashCode = this.hash(key);
     hashCode = Math.abs(hashCode) % this.capacity; // hashcode POSITIVE ALWAYS
@@ -37,9 +68,15 @@ class HashMap {
 
     if (!keyFound) {
       this.buckets[hashCode].push({ key, value });
+      this.size++;
+    }
+
+    if (this.size / this.capacity > 0.75) {
+      this.resize();
     }
   }
 
+  // takes key as an arguement and returns the value assigned to the key
   get(key) {
     let hashCode = this.hash(key);
     hashCode = Math.abs(hashCode) % this.capacity;
@@ -55,6 +92,7 @@ class HashMap {
     return undefined;
   }
 
+  // takes key as an arguement and will return true or false depending if the key entered matches one in the hashMap
   has(key) {
     let hashCode = this.hash(key);
     hashCode = Math.abs(hashCode) % this.capacity;
@@ -71,6 +109,7 @@ class HashMap {
     return false;
   }
 
+  // takes key as an arguement and removes THAT entry. if it EXISTS
   remove(key) {
     let hashCode = this.hash(key);
     hashCode = Math.abs(hashCode) % this.capacity;
@@ -88,6 +127,7 @@ class HashMap {
     return false;
   }
 
+  // returns the length of the stored keys in the hashMap method
   length() {
     let keyCount = 0;
 
@@ -99,10 +139,12 @@ class HashMap {
     return keyCount;
   }
 
+  // believe it or not, clears ALL entries in he hashMap method
   clear() {
     this.buckets = new Array(this.capacity);
   }
 
+  // returns an array with all KEYS (not values)
   keys() {
     let collectedKeys = [];
     for (let i = 0; i < this.buckets.length; i++) {
@@ -114,5 +156,36 @@ class HashMap {
       }
     }
     return collectedKeys;
+  }
+
+  // returns an array with all VALUES (not keys)
+  values() {
+    let collectedValues = [];
+    for (let i = 0; i < this.buckets.length; i++) {
+      if (!this.buckets[i]) {
+        continue;
+      }
+      for (let j = 0; j < this.buckets[i].length; j++) {
+        collectedValues.push(this.buckets[i][j].value);
+      }
+    }
+    return collectedValues;
+  }
+
+  // returns the key and value AS A PAIR, together.
+  entries() {
+    let collectedEntries = [];
+    for (let i = 0; i < this.buckets.length; i++) {
+      if (!this.buckets[i]) {
+        continue;
+      }
+      for (let j = 0; j < this.buckets[i].length; j++) {
+        collectedEntries.push([
+          this.buckets[i][j].key,
+          this.buckets[i][j].value,
+        ]);
+      }
+    }
+    return collectedEntries;
   }
 }
